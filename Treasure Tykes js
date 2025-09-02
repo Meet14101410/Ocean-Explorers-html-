@@ -1,0 +1,116 @@
+/* Treasure Tykes - JS */
+/* Works with treasure-tykes.html and treasure-tykes.css */
+
+document.addEventListener("DOMContentLoaded", () => {
+  const game = document.querySelector(".game");
+  const player = document.querySelector(".player");
+  const scoreEl = document.querySelector(".score .value");
+  const overlay = document.querySelector(".overlay");
+  const finalScoreEl = document.querySelector(".final-score");
+  let score = 0;
+  let playerY = 50; // % of game height
+  let gameSpeed = 2;
+  let isAlive = true;
+
+  /** Move player vertically */
+  function movePlayer(delta) {
+    if (!isAlive) return;
+    playerY = Math.max(10, Math.min(90, playerY + delta));
+    player.style.top = `${playerY}%`;
+  }
+
+  /** Keyboard controls */
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowUp") movePlayer(-5);
+    if (e.key === "ArrowDown") movePlayer(5);
+  });
+
+  /** Touch controls */
+  document.querySelector(".btn.up").addEventListener("touchstart", () => movePlayer(-5));
+  document.querySelector(".btn.down").addEventListener("touchstart", () => movePlayer(5));
+
+  /** Spawn obstacles */
+  function spawnObstacle() {
+    if (!isAlive) return;
+    const obstacle = document.createElement("div");
+    obstacle.className = "obstacle";
+    game.appendChild(obstacle);
+
+    let pos = 100;
+    const top = 10 + Math.random() * 70;
+    obstacle.style.top = `${top}%`;
+
+    const interval = setInterval(() => {
+      if (!isAlive) { obstacle.remove(); clearInterval(interval); return; }
+      pos -= gameSpeed;
+      obstacle.style.left = `${pos}%`;
+
+      if (pos < -10) { obstacle.remove(); clearInterval(interval); }
+      if (checkCollision(player, obstacle)) { endGame(); }
+    }, 30);
+
+    setTimeout(spawnObstacle, 1500 + Math.random() * 1000);
+  }
+
+  /** Spawn treasure */
+  function spawnTreasure() {
+    if (!isAlive) return;
+    const treasure = document.createElement("div");
+    treasure.className = "collectable";
+    game.appendChild(treasure);
+
+    let pos = 100;
+    const top = 10 + Math.random() * 70;
+    treasure.style.top = `${top}%`;
+
+    const interval = setInterval(() => {
+      if (!isAlive) { treasure.remove(); clearInterval(interval); return; }
+      pos -= gameSpeed;
+      treasure.style.left = `${pos}%`;
+
+      if (pos < -10) { treasure.remove(); clearInterval(interval); }
+      if (checkCollision(player, treasure)) {
+        increaseScore();
+        treasure.remove();
+        clearInterval(interval);
+      }
+    }, 30);
+
+    setTimeout(spawnTreasure, 1800 + Math.random() * 1000);
+  }
+
+  /** Score system */
+  function increaseScore() {
+    score += 10;
+    scoreEl.textContent = score;
+    if (score % 50 === 0) gameSpeed += 0.2; // harder each 50 points
+  }
+
+  /** Collision detection */
+  function checkCollision(a, b) {
+    const aRect = a.getBoundingClientRect();
+    const bRect = b.getBoundingClientRect();
+    return !(
+      aRect.top > bRect.bottom ||
+      aRect.bottom < bRect.top ||
+      aRect.right < bRect.left ||
+      aRect.left > bRect.right
+    );
+  }
+
+  /** End game */
+  function endGame() {
+    isAlive = false;
+    finalScoreEl.textContent = score;
+    overlay.classList.add("show");
+  }
+
+  /** Restart */
+  document.querySelector(".btn.restart").addEventListener("click", () => {
+    window.location.reload();
+  });
+
+  // Start spawning
+  spawnObstacle();
+  spawnTreasure();
+});
