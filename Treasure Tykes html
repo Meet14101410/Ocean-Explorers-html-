@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Treasure Tykes</title>
+  <link rel="stylesheet" href="treasure-tykes.css">
+</head>
+<body>
+  <div class="game">
+    <!-- Background layers -->
+    <div class="bg-layer" data-depth="1"></div>
+    <div class="bg-layer" data-depth="2"></div>
+    <div class="bg-layer" data-depth="3"></div>
+
+    <!-- Player character -->
+    <div class="player">
+      <div class="body">
+        <div class="hat"></div>
+        <div class="face"></div>
+      </div>
+    </div>
+
+    <!-- HUD (Score / Lives) -->
+    <div class="hud">
+      <div class="panel score">Score: <span class="value">0</span></div>
+    </div>
+
+    <!-- Controls (for mobile) -->
+    <div class="controls">
+      <div class="btn up">⬆</div>
+      <div class="btn down">⬇</div>
+    </div>
+
+    <!-- Game Over Overlay -->
+    <div class="overlay">
+      <div class="card">
+        <h2>Game Over</h2>
+        <p>Your final score: <span class="final-score">0</span></p>
+        <div class="btn restart">Restart</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="treasure-tykes.js"></script>
+</body>
+</html>
