@@ -1,0 +1,99 @@
+/* Ocean Explorers - JS
+   Controls: Arrow keys (desktop) / On-screen buttons (mobile)
+*/
+
+document.addEventListener("DOMContentLoaded", () => {
+  const game = document.querySelector(".game");
+  const player = document.querySelector(".player");
+  const scoreEl = document.querySelector(".score .value");
+  let score = 0;
+  let playerY = 50; // percentage
+  let speed = 2;    // obstacle speed
+  let isAlive = true;
+
+  // Movement controls
+  document.addEventListener("keydown", (e) => {
+    if (!isAlive) return;
+    if (e.key === "ArrowUp") movePlayer(-5);
+    if (e.key === "ArrowDown") movePlayer(5);
+  });
+
+  // Touch button controls
+  document.querySelectorAll(".btn.up, .btn.down").forEach(btn => {
+    btn.addEventListener("touchstart", () => {
+      movePlayer(btn.classList.contains("up") ? -5 : 5);
+    });
+  });
+
+  function movePlayer(delta) {
+    playerY = Math.max(10, Math.min(90, playerY + delta));
+    player.style.top = `${playerY}%`;
+  }
+
+  // Obstacle spawner
+  function spawnObstacle() {
+    if (!isAlive) return;
+    const obstacle = document.createElement("div");
+    obstacle.className = "obstacle";
+    const skin = document.createElement("div");
+    skin.className = "skin";
+    obstacle.appendChild(skin);
+
+    obstacle.style.left = "100%";
+    obstacle.style.top = `${10 + Math.random() * 70}%`;
+    game.appendChild(obstacle);
+
+    let pos = 100;
+    const interval = setInterval(() => {
+      if (!isAlive) { clearInterval(interval); obstacle.remove(); return; }
+      pos -= speed;
+      obstacle.style.left = `${pos}%`;
+
+      if (pos < -10) { // passed screen
+        clearInterval(interval);
+        obstacle.remove();
+        increaseScore();
+      }
+
+      if (checkCollision(player, obstacle)) {
+        endGame();
+        clearInterval(interval);
+      }
+    }, 30);
+
+    setTimeout(spawnObstacle, 1200 + Math.random() * 1000);
+  }
+
+  // Score update
+  function increaseScore() {
+    score += 10;
+    scoreEl.textContent = score;
+    if (score % 50 === 0) speed += 0.3; // increase difficulty
+  }
+
+  // Collision detection
+  function checkCollision(a, b) {
+    const aRect = a.getBoundingClientRect();
+    const bRect = b.getBoundingClientRect();
+    return !(
+      aRect.top > bRect.bottom ||
+      aRect.bottom < bRect.top ||
+      aRect.right < bRect.left ||
+      aRect.left > bRect.right
+    );
+  }
+
+  // Game over
+  function endGame() {
+    isAlive = false;
+    document.querySelector(".overlay").classList.add("show");
+  }
+
+  // Restart button
+  document.querySelector(".btn.restart")?.addEventListener("click", () => {
+    window.location.reload();
+  });
+
+  // Start
+  spawnObstacle();
+});
