@@ -1,0 +1,51 @@
+Here’s a short **HTML-only** starter for **Ocean Explorers**:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ocean Explorers</title>
+</head>
+<body>
+  <!-- Header / HUD -->
+  <header>
+    <h1>🌊 Ocean Explorers</h1>
+    <div id="hud">
+      <span id="score" aria-live="polite">Score: 0</span>
+      <span id="lives" aria-live="polite">Lives: 3</span>
+      <button id="startBtn" type="button">Start</button>
+    </div>
+  </header>
+
+  <!-- Game Area -->
+  <main>
+    <section id="game" role="region" aria-label="Underwater Zone">
+      <!-- Player -->
+      <div id="sub" class="entity" data-entity="submarine" aria-label="Your Submarine">🛥️</div>
+
+      <!-- Collectibles -->
+      <div class="entity treasure" data-entity="treasure" aria-label="Treasure Chest">🪙</div>
+      <div class="entity pearl" data-entity="pearl" aria-label="Pearl">⚪</div>
+
+      <!-- Obstacles -->
+      <div class="entity coral" data-entity="coral" aria-label="Coral Reef">🪸</div>
+      <div class="entity shark" data-entity="shark" aria-label="Shark">🦈</div>
+    </section>
+  </main>
+
+  <!-- Instructions -->
+  <footer>
+    <p><strong>How to play:</strong> Collect treasures & pearls, avoid sharks & coral.
+       Use arrow keys or on-screen controls (to be added).</p>
+  </footer>
+
+  <!-- Hooks for CSS/JS (add your files later) -->
+  <!-- <link rel="stylesheet" href="ocean-explorers.css"> -->
+  <!-- <script src="ocean-explorers.js"></script> -->
+</body>
+</html>
+```
+
+Want matching **CSS** and **JS** (short) to make it playable?
