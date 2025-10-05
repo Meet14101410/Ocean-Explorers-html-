@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Brainy Lab</title>
+  <style>
+    :root{--bg:#0f1724;--card:#111827;--accent:#06b6d4;--muted:#9ca3af}
+    *{box-sizing:border-box;font-family:Inter,system-ui,Segoe UI,Roboto,sans-serif}
+    body{margin:0;background:linear-gradient(180deg,#071028, #0f1724);color:#e6eef6;display:flex;align-items:center;justify-content:center;height:100vh}
+    .card{width:360px;padding:20px;border-radius:14px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));box-shadow:0 6px 30px rgba(2,6,23,0.6)}
+    h1{margin:0 0 8px;font-size:20px;display:flex;justify-content:space-between;align-items:center}
+    .meta{font-size:12px;color:var(--muted)}
+    .question{margin:16px 0;font-size:16px;min-height:48px}
+    .opts{display:grid;gap:10px}
+    button.opt{background:#0b1220;border:1px solid rgba(255,255,255,0.04);padding:10px;border-radius:8px;color:inherit;text-align:left;cursor:pointer}
+    button.opt.correct{outline:2px solid rgba(6,182,212,0.2);background:linear-gradient(90deg,#05232b,#06343a)}
+    button.opt.wrong{opacity:0.6;filter:grayscale(30%);}
+    .row{display:flex;justify-content:space-between;align-items:center;margin-top:14px}
+    .small{font-size:13px;color:var(--muted)}
+    .btn{background:var(--accent);border:none;padding:8px 12px;border-radius:8px;color:#002;cursor:pointer}
+    .footer{margin-top:12px;text-align:center;color:var(--muted);font-size:12px}
+  </style>
+</head>
+<body>
+  <div class="card" id="app">
+    <h1>Brainy Lab <span class="meta">Quick Quiz</span></h1>
+    <div class="question" id="q">Loading…</div>
+    <div class="opts" id="opts"></div>
+    <div class="row">
+      <div class="small">Score: <span id="score">0</span></div>
+      <div>
+        <button class="btn" id="next">Next</button>
+      </div>
+    </div>
+    <div class="footer">Tips: answer quickly for extra style ✨</div>
+  </div>
+
+  <script>
+    const questions = [
+      {q:'What gas do plants produce during photosynthesis?', a:['Oxygen','Carbon dioxide','Nitrogen'], correct:0},
+      {q:'Atomic number of Carbon?', a:['6','12','14'], correct:0},
+      {q:'What is the powerhouse of the cell?', a:['Mitochondria','Nucleus','Ribosome'], correct:0},
+      {q:'Planet known as the Red Planet?', a:['Mars','Venus','Jupiter'], correct:0},
+      {q:'H2O is the chemical formula for?', a:['Water','Hydrogen peroxide','Salt'], correct:0}
+    ];
+
+    let idx = 0, score = 0, answered = false;
+    const qEl = document.getElementById('q');
+    const optsEl = document.getElementById('opts');
+    const scoreEl = document.getElementById('score');
+    const nextBtn = document.getElementById('next');
+
+    function render(){
+      answered = false;
+      const item = questions[idx];
+      qEl.textContent = (idx+1) + '. ' + item.q;
+      optsEl.innerHTML = '';
+      item.a.forEach((text,i)=>{
+        const b = document.createElement('button');
+        b.className = 'opt';
+        b.textContent = text;
+        b.onclick = ()=>select(i,b);
+        optsEl.appendChild(b);
+      });
+    }
+
+    function select(i, btn){
+      if(answered) return;
+      answered = true;
+      const item = questions[idx];
+      if(i===item.correct){
+        btn.classList.add('correct');
+        score += 10;
+      } else {
+        btn.classList.add('wrong');
+        // reveal correct
+        optsEl.querySelectorAll('.opt')[item.correct].classList.add('correct');
+      }
+      scoreEl.textContent = score;
+    }
+
+    nextBtn.addEventListener('click', ()=>{
+      idx = (idx + 1) % questions.length;
+      render();
+    });
+
+    // keyboard shortcuts
+    window.addEventListener('keydown', e=>{
+      if(e.key>='1' && e.key<='9'){
+        const k = Number(e.key)-1;
+        const btn = optsEl.children[k];
+        if(btn) btn.click();
+      }
+      if(e.key==='Enter') nextBtn.click();
+    });
+
+    // start
+    r
